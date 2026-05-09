@@ -1,0 +1,28 @@
+{
+  "name": "atlas-bots",
+  "version": "3.0.0",
+  "description": "Atlas unified personal assistant — Discord + Telegram (shared brain, shared data)",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "discord": "node -e \"import('./discord/bot.js').then(m => m.startDiscordBot())\"",
+    "telegram": "node -e \"import('./telegram/bot.js').then(m => m.startTelegramBot())\""
+  },
+  "dependencies": {
+    "discord.js": "^14.16.0",
+    "@discordjs/voice": "^0.18.0",
+    "grammy": "^1.31.0",
+    "opusscript": "^0.0.8",
+    "libsodium-wrappers": "^0.7.15",
+    "prism-media": "^1.3.5",
+    "ws": "^8.18.0",
+    "dotenv": "^16.4.0"
+  },
+  "optionalDependencies": {
+    "@discordjs/opus": "^0.9.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
