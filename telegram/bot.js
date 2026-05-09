@@ -1,5 +1,5 @@
 // Telegram bot — full-featured with data middleware, shared memory, voice notes
-import { Bot } from 'grammy';
+import { Bot, InputFile } from 'grammy';
 import {
   TELEGRAM_TOKEN, ALLOWED_TELEGRAM_USER, GROQ_MODEL,
   DEEPGRAM_KEY, ELEVENLABS_KEY, ELEVENLABS_VOICE,
@@ -96,6 +96,11 @@ export function startTelegramBot() {
   }
 
   const bot = new Bot(TELEGRAM_TOKEN);
+
+  // Global error handler — prevents silent crashes
+  bot.catch((err) => {
+    console.error('[Telegram] Bot error:', err.error || err.message || err);
+  });
 
   // /start command
   bot.command('start', async (ctx) => {
@@ -214,7 +219,6 @@ export function startTelegramBot() {
       // Reply with voice + text
       const voiceBuffer = await generateVoiceReply(reply);
       if (voiceBuffer) {
-        const { InputFile } = await import('grammy');
         await ctx.replyWithVoice(new InputFile(voiceBuffer, 'atlas-reply.ogg'));
       }
 
@@ -233,7 +237,7 @@ export function startTelegramBot() {
     }
   });
 
-  // Start the bot
+  // Start the bot with error handling
   console.log('[Telegram] Starting...');
   bot.start({
     onStart: (botInfo) => {
@@ -242,6 +246,9 @@ export function startTelegramBot() {
       console.log(`[Telegram] Allowed user: ${ALLOWED_TELEGRAM_USER}`);
       console.log(`[Telegram] Features: text + voice notes + data middleware + cross-channel sync`);
     },
+  }).catch((err) => {
+    console.error('[Telegram] FATAL — bot.start() failed:', err.message || err);
+    console.error('[Telegram] Check: is another process polling the same token? Is the token valid?');
   });
 
   // Graceful shutdown
